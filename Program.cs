@@ -1,6 +1,7 @@
 global using ToDoListAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using ToDoListAPI.Services;
+//using ToDoListAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddControllers();
 
 // We are using AddScoped() method because we want the instance to be alive
 // and available for the entire scope of the given HTTP request.
+builder.Services.AddScoped<ITaskToDoRepository, TaskToDoRepository>();
 builder.Services.AddScoped<ITaskToDoService, TaskToDoService>();
 
 
