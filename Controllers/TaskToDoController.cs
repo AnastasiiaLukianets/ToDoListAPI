@@ -18,102 +18,65 @@ namespace ToDoListAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TaskToDo>>> GetTasksToDo()
         {
-            try
-            {
-                return Ok(await _taskToDoService.GetTasksToDo());
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
+            return Ok(await _taskToDoService.GetTasksToDo());
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<TaskToDo>> GetTaskToDo(int id)
         {
-            try
-            {
-                var result = await _taskToDoService.GetTaskToDo(id);
+            var result = await _taskToDoService.GetTaskToDo(id);
 
-                if (result == null)
-                {
-                    return NotFound();
-                }
-
-                return result;
-            }
-            catch (Exception)
+            if (result == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
+                return NotFound();
             }
+
+            return result;
         }
 
         [HttpPost]
         public async Task<ActionResult<List<TaskToDo>>> AddTaskToDo(TaskToDo task)
         {
-            // new object return
-            // 200 -> 201 status code
-            try
+            if (task == null)
             {
-                if (task == null)
-                {
-                    return BadRequest();
-                }
-
-                var createdTaskToDo = await _taskToDoService.AddTaskToDo(task);
-
-                return CreatedAtAction(nameof(GetTaskToDo),
-                    new { Id = createdTaskToDo.Id}, createdTaskToDo);
+                return BadRequest();
             }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error creating new TaskToDo record");
-            }
+
+            var createdTaskToDo = await _taskToDoService.AddTaskToDo(task);
+
+            return CreatedAtAction(nameof(GetTaskToDo),
+                new { Id = createdTaskToDo.Id}, createdTaskToDo);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<TaskToDo>> UpdateTaskToDo(TaskToDo request)
-        {
-            try 
-            { 
-                var taskToDoToUpdate = await _taskToDoService.GetTaskToDo(request.Id);
-
-                if (taskToDoToUpdate == null)
-                {
-                    return NotFound($"TaskToDo with Id = {request.Id} not found");
-                }
-
-                return await _taskToDoService.UpdateTaskToDo(request);
-            }
-            catch (Exception)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<TaskToDo?>> UpdateTaskToDo(int id, TaskToDo request)
+        { 
+            if (id != request.Id)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error updating data");
+                return BadRequest("Task Id mismatch");
             }
+
+            var taskToDoToUpdate = await _taskToDoService.GetTaskToDo(request.Id);
+
+            if (taskToDoToUpdate == null)
+            {
+                return NotFound($"TaskToDo with Id = {request.Id} not found");
+            }
+
+            return await _taskToDoService.UpdateTaskToDo(request);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TaskToDo>> Delete(int id)
+        public async Task<ActionResult<TaskToDo?>> Delete(int id)
         {
-            try
-            {
-                var taskToDoToDelete = await _taskToDoService.GetTaskToDo(id);
+            var taskToDoToDelete = await _taskToDoService.GetTaskToDo(id);
 
-                if (taskToDoToDelete == null)
-                {
-                    return NotFound($"TaskToDo with Id = {id} not found");
-                }
-
-                return await _taskToDoService.DeleteTaskToDo(id);
-            }
-            catch (Exception)
+            if (taskToDoToDelete == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error deleting data");
+                return NotFound($"TaskToDo with Id = {id} not found");
             }
+
+            return await _taskToDoService.DeleteTaskToDo(id);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ToDoListAPI.Services
         private readonly DataContext _dataContext;
         public TaskToDoService(DataContext dataContext)
         {
-            _dataContext = _dataContext;
+            _dataContext = dataContext;
         }
 
         public async Task<TaskToDo> AddTaskToDo(TaskToDo task)
@@ -19,7 +19,7 @@ namespace ToDoListAPI.Services
             return result.Entity;
         }
 
-        public async Task<TaskToDo> DeleteTaskToDo(int id)
+        public async Task<TaskToDo?> DeleteTaskToDo(int id)
         {
             var result = await _dataContext.TasksToDo
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -39,14 +39,13 @@ namespace ToDoListAPI.Services
             return await _dataContext.TasksToDo.ToListAsync();
         }
 
-        public async Task<TaskToDo> GetTaskToDo(int id)
+        public async Task<TaskToDo?> GetTaskToDo(int id)
         {
-            // nullable warning CS8603
             return await _dataContext.TasksToDo
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<TaskToDo> UpdateTaskToDo(TaskToDo task)
+        public async Task<TaskToDo?> UpdateTaskToDo(TaskToDo task)
         {
             var result = await _dataContext.TasksToDo
                 .FirstOrDefaultAsync(t => t.Id == task.Id);
