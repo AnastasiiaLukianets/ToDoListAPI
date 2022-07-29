@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ToDoListAPI.Services;
 
 namespace ToDoListAPI.Controllers
 {
@@ -8,106 +9,74 @@ namespace ToDoListAPI.Controllers
     [ApiController]
     public class TaskToDoController : ControllerBase
     {
-        private static List<TaskToDo> tasks = new List<TaskToDo>
+        private readonly ITaskToDoService _taskToDoService;
+        public TaskToDoController(ITaskToDoService taskToDoService)
         {
-            new TaskToDo
-                {
-                    Id = 1,
-                    DescriptionText = "Book hotel",
-                    DueDate = DateTime.Parse("22/7/2022  8:30:52 AM"),
-                    IsCompleted = false
-                },
-                new TaskToDo
-                {
-                    Id = 2,
-                    DescriptionText = "Buy bus ticket",
-                    DueDate = DateTime.Parse("20/7/2022 8:30:52 AM"),
-                    IsCompleted = false
-                }
-        };
-        private readonly DataContext _context;
-
-        public TaskToDoController(DataContext context)
-        {
-            _context = context;
+            _taskToDoService = taskToDoService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TaskToDo>>> Get()
+        public async Task<ActionResult<List<TaskToDo>>> GetTasksToDo()
         {
-            //return Ok(tasks);
-            return Ok(await _context.TasksToDo.ToListAsync()); // call to the service 1 to 1 
-            // no instance of context in controller
-            // git
+            return Ok(await _taskToDoService.GetTasksToDo());
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TaskToDo>> Get(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<TaskToDo>> GetTaskToDo(int id)
         {
-            //var task = tasks.Find(x => x.Id == id);
-            var task = await _context.TasksToDo.FindAsync(id);
-            if (task == null)
+            var result = await _taskToDoService.GetTaskToDo(id);
+
+            if (result == null)
             {
-                //return BadRequest("Task not found."); // Rest convention
                 return NotFound();
             }
-            return Ok(task);
+
+            return result;
         }
 
         [HttpPost]
         public async Task<ActionResult<List<TaskToDo>>> AddTaskToDo(TaskToDo task)
         {
-            //tasks.Add(task);
-            //return Ok(tasks);
-            _context.TasksToDo.Add(task); // changes in table
-            await _context.SaveChangesAsync(); // save changes in DB table
+            if (task == null)
+            {
+                return BadRequest();
+            }
 
-            return Ok(await _context.TasksToDo.ToListAsync());
-            // new object return
-            // 200 -> 201 status code
+            var createdTaskToDo = await _taskToDoService.AddTaskToDo(task);
+
+            return CreatedAtAction(nameof(GetTaskToDo),
+                new { Id = createdTaskToDo.Id}, createdTaskToDo);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<List<TaskToDo>>> UpdateTaskToDo(TaskToDo request)
-        {
-            /*
-            var task = tasks.Find(x => x.Id == request.Id);
-            if (task == null)
-                return BadRequest("Task not found.");
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<TaskToDo?>> UpdateTaskToDo(int id, TaskToDo request)
+        { 
+            if (id != request.Id)
+            {
+                return BadRequest("Task Id mismatch");
+            }
 
-            task.DescriptionText = request.DescriptionText;
-            task.IsCompleted = request.IsCompleted;
-            task.DueDate = request.DueDate;
+            var taskToDoToUpdate = await _taskToDoService.GetTaskToDo(request.Id);
 
-            return Ok(tasks);
-            */
+            if (taskToDoToUpdate == null)
+            {
+                return NotFound($"TaskToDo with Id = {request.Id} not found");
+            }
 
-            var dbTaskToDo = await _context.TasksToDo.FindAsync(request.Id);
-            if (dbTaskToDo == null)
-                return BadRequest("Task not found.");
-
-            dbTaskToDo.DescriptionText = request.DescriptionText;
-            dbTaskToDo.IsCompleted = request.IsCompleted;
-            dbTaskToDo.DueDate = request.DueDate;
-
-            await _context.SaveChangesAsync(); // save changes in DB table
-
-            return Ok(await _context.TasksToDo.ToListAsync()); // not the hole list return for performance reasons
+            return await _taskToDoService.UpdateTaskToDo(request);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<List<TaskToDo>>> Delete(int id)
+        public async Task<ActionResult<TaskToDo?>> Delete(int id)
         {
-            //var task = tasks.Find(x => x.Id == id);
-            var task = await _context.TasksToDo.FindAsync(id);
-            if (task == null)
-                return BadRequest("Task to delete not found.");
+            var taskToDoToDelete = await _taskToDoService.GetTaskToDo(id);
 
-            //tasks.Remove(task);
-            _context.TasksToDo.Remove(task);
-            await _context.SaveChangesAsync(); // save changes in DB table
+            if (taskToDoToDelete == null)
+            {
+                return NotFound($"TaskToDo with Id = {id} not found");
+            }
 
-            return Ok(tasks);
+            return await _taskToDoService.DeleteTaskToDo(id);
         }
     }
 }
