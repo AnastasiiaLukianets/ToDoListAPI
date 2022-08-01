@@ -1,7 +1,6 @@
 global using ToDoListAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using ToDoListAPI.Services;
-//using ToDoListAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +10,7 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // We are using AddScoped() method because we want the instance to be alive
 // and available for the entire scope of the given HTTP request.

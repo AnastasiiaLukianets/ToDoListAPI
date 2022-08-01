@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ToDoListAPI.Models;
 
 namespace ToDoListAPI.Services
 {
@@ -12,40 +13,24 @@ namespace ToDoListAPI.Services
             _dataContext = dataContext;
         }
 
-        public async Task<TaskToDo> AddTaskToDo(TaskToDo task)
+        public async Task<IEnumerable<TaskToDoDTO>> GetTasksToDo()
+        {
+            return await _dataContext.TasksToDo.ToListAsync();
+        }
+
+        public async Task<TaskToDoDTO?> GetTaskToDo(int id)
+        {
+            return await _dataContext.TasksToDo
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
+        public async Task<TaskToDoDTO> AddTaskToDo(TaskToDoDTO task)
         {
             var result = await _dataContext.TasksToDo.AddAsync(task);
             await _dataContext.SaveChangesAsync();
             return result.Entity;
         }
 
-        public async Task<TaskToDo?> DeleteTaskToDo(int id)
-        {
-            var result = await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (result != null)
-            {
-                _dataContext.TasksToDo.Remove(result);
-                await _dataContext.SaveChangesAsync();
-                return result;
-            }
-
-            return null;
-        }
-
-        public async Task<IEnumerable<TaskToDo>> GetTasksToDo()
-        {
-            return await _dataContext.TasksToDo.ToListAsync();
-        }
-
-        public async Task<TaskToDo?> GetTaskToDo(int id)
-        {
-            return await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == id);
-        }
-
-        public async Task<TaskToDo?> UpdateTaskToDo(TaskToDo task)
+        public async Task<TaskToDoDTO?> UpdateTaskToDo(TaskToDoDTO task)
         {
             var result = await _dataContext.TasksToDo
                 .FirstOrDefaultAsync(t => t.Id == task.Id);
@@ -58,6 +43,20 @@ namespace ToDoListAPI.Services
 
                 await _dataContext.SaveChangesAsync();
 
+                return result;
+            }
+
+            return null;
+        }
+        public async Task<TaskToDoDTO?> DeleteTaskToDo(int id)
+        {
+            var result = await _dataContext.TasksToDo
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (result != null)
+            {
+                _dataContext.TasksToDo.Remove(result);
+                await _dataContext.SaveChangesAsync();
                 return result;
             }
 

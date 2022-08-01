@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ToDoListAPI.Models;
 using ToDoListAPI.Services;
 
 namespace ToDoListAPI.Controllers
@@ -16,15 +17,15 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TaskToDo>>> GetTasksToDo()
+        public async Task<ActionResult<List<TaskToDoDTO>>> GetTasksToDo()
         {
-            return Ok(await _taskToDoService.TaskToDoRepository.GetTasksToDo());
+            return Ok(await _taskToDoService.GetTasksToDo());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<TaskToDo>> GetTaskToDo(int id)
+        public async Task<ActionResult<TaskToDoResponse>> GetTaskToDo(int id)
         {
-            var result = await _taskToDoService.TaskToDoRepository.GetTaskToDo(id);
+            var result = await _taskToDoService.GetTaskToDo(id);
 
             if (result == null)
             {
@@ -35,48 +36,48 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<TaskToDo>>> AddTaskToDo(TaskToDo task)
+        public async Task<ActionResult<List<TaskToDoDTO>>> AddTaskToDo(TaskToDoDTO task)
         {
             if (task == null)
             {
                 return BadRequest();
             }
 
-            var createdTaskToDo = await _taskToDoService.TaskToDoRepository.AddTaskToDo(task);
+            var createdTaskToDo = await _taskToDoService.AddTaskToDo(task);
 
             return CreatedAtAction(nameof(GetTaskToDo),
                 new { Id = createdTaskToDo.Id}, createdTaskToDo);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<TaskToDo?>> UpdateTaskToDo(int id, TaskToDo request)
+        public async Task<ActionResult<TaskToDoDTO?>> UpdateTaskToDo(int id, TaskToDoDTO request)
         { 
             if (id != request.Id)
             {
                 return BadRequest("Task Id mismatch");
             }
 
-            var taskToDoToUpdate = await _taskToDoService.TaskToDoRepository.GetTaskToDo(request.Id);
+            var taskToDoToUpdate = await _taskToDoService.GetTaskToDo(request.Id);
 
             if (taskToDoToUpdate == null)
             {
                 return NotFound($"TaskToDo with Id = {request.Id} not found");
             }
 
-            return await _taskToDoService.TaskToDoRepository.UpdateTaskToDo(request);
+            return await _taskToDoService.UpdateTaskToDo(request);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TaskToDo?>> Delete(int id)
+        public async Task<ActionResult<TaskToDoDTO?>> Delete(int id)
         {
-            var taskToDoToDelete = await _taskToDoService.TaskToDoRepository.GetTaskToDo(id);
+            var taskToDoToDelete = await _taskToDoService.GetTaskToDo(id);
 
             if (taskToDoToDelete == null)
             {
                 return NotFound($"TaskToDo with Id = {id} not found");
             }
 
-            return await _taskToDoService.TaskToDoRepository.DeleteTaskToDo(id);
+            return await _taskToDoService.DeleteTaskToDo(id);
         }
     }
 }
