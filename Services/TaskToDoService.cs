@@ -1,67 +1,44 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using ToDoListAPI.Models;
 
 namespace ToDoListAPI.Services
 {
-    // Move logic related to DataContext here
-    // Create 1 method for each controller method
     public class TaskToDoService : ITaskToDoService
     {
-        private readonly DataContext _dataContext;
-        public TaskToDoService(DataContext dataContext)
+        private readonly ITaskToDoRepository _taskToDoRepository;
+        private readonly IMapper _mapper;
+
+        public TaskToDoService(ITaskToDoRepository taskToDoRepository, IMapper mapper)
         {
-            _dataContext = dataContext;
+            _taskToDoRepository = taskToDoRepository;
+            _mapper = mapper;
         }
 
-        public async Task<TaskToDo> AddTaskToDo(TaskToDo task)
+        #region "ITaskToDoService implementation
+        public async Task<IEnumerable<TaskToDoResponse>> GetTasksToDo()
         {
-            var result = await _dataContext.TasksToDo.AddAsync(task);
-            await _dataContext.SaveChangesAsync();
-            return result.Entity;
+            var tasksSource = await _taskToDoRepository.GetTasksToDo();
+            var tasks = _mapper.Map<List<TaskToDoResponse>>(tasksSource);
+            return tasks;
         }
-
-        public async Task<TaskToDo?> DeleteTaskToDo(int id)
+        public async Task<TaskToDoResponse> GetTaskToDo(int id)
         {
-            var result = await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (result != null)
-            {
-                _dataContext.TasksToDo.Remove(result);
-                await _dataContext.SaveChangesAsync();
-                return result;
-            }
-
-            return null;
+            var taskSource = await _taskToDoRepository.GetTaskToDo(id);
+            var task = _mapper.Map<TaskToDoResponse>(taskSource);
+            return task;
         }
-
-        public async Task<IEnumerable<TaskToDo>> GetTasksToDo()
+        public async Task<TaskToDoDTO> AddTaskToDo(TaskToDoDTO task)
         {
-            return await _dataContext.TasksToDo.ToListAsync();
+            return await _taskToDoRepository.AddTaskToDo(task);
         }
-
-        public async Task<TaskToDo?> GetTaskToDo(int id)
+        public async Task<TaskToDoDTO> UpdateTaskToDo(TaskToDoDTO task)
         {
-            return await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == id);
+            return await _taskToDoRepository.UpdateTaskToDo(task);
         }
-
-        public async Task<TaskToDo?> UpdateTaskToDo(TaskToDo task)
+        public async Task<TaskToDoDTO> DeleteTaskToDo(int id)
         {
-            var result = await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == task.Id);
-
-            if (result != null)
-            {
-                result.DescriptionText = task.DescriptionText;
-                result.IsCompleted = task.IsCompleted;
-                result.DueDate = task.DueDate;
-
-                await _dataContext.SaveChangesAsync();
-
-                return result;
-            }
-
-            return null;
+            return await _taskToDoRepository.DeleteTaskToDo(id);
         }
+        #endregion 
     }
 }

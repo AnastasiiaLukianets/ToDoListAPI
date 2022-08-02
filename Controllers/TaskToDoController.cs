@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ToDoListAPI.Models;
 using ToDoListAPI.Services;
 
 namespace ToDoListAPI.Controllers
@@ -16,13 +17,13 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TaskToDo>>> GetTasksToDo()
+        public async Task<ActionResult<List<TaskToDoDTO>>> GetTasksToDo()
         {
             return Ok(await _taskToDoService.GetTasksToDo());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<TaskToDo>> GetTaskToDo(int id)
+        public async Task<ActionResult<TaskToDoResponse>> GetTaskToDo(int id)
         {
             var result = await _taskToDoService.GetTaskToDo(id);
 
@@ -35,7 +36,7 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<TaskToDo>>> AddTaskToDo(TaskToDo task)
+        public async Task<ActionResult<List<TaskToDoDTO>>> AddTaskToDo(TaskToDoDTO task)
         {
             if (task == null)
             {
@@ -49,7 +50,7 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<TaskToDo?>> UpdateTaskToDo(int id, TaskToDo request)
+        public async Task<ActionResult<TaskToDoDTO?>> UpdateTaskToDo(int id, TaskToDoDTO request)
         { 
             if (id != request.Id)
             {
@@ -67,7 +68,7 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TaskToDo?>> Delete(int id)
+        public async Task<ActionResult<TaskToDoDTO?>> Delete(int id)
         {
             var taskToDoToDelete = await _taskToDoService.GetTaskToDo(id);
 
