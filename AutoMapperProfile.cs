@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ToDoListAPI.Models;
+using ToDoListAPI.ResponseDto;
 
 namespace ToDoListAPI
 {
@@ -7,10 +8,14 @@ namespace ToDoListAPI
     {
         public AutoMapperProfile()
         {
-            CreateMap<TaskToDoDTO, TaskToDoResponse>()
-                .ForMember(
-                    dest => dest.DescriptionText,
-                    opt => opt.MapFrom(src => $"{src.DescriptionText} (Due Date: {src.DueDate.ToShortDateString()})"));
+            CreateMap<TaskToDo, TaskToDoResponse>()
+                .ForMember(dest => dest.TaskToDoResponseId, 
+                            opt => opt.MapFrom(src => src.TaskToDoId))
+                .ForMember(dest => dest.DescriptionText, 
+                            opt => opt.MapFrom(src => $"{src.DescriptionText} (Due Date: {src.DueDate.ToShortDateString()})"));
+
+            CreateMap<User, UserResponse>();
         }
     }
 }
+

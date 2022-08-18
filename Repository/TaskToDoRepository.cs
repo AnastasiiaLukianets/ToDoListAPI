@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ToDoListAPI.Models;
 
-namespace ToDoListAPI.Services
+namespace ToDoListAPI.Repository
 {
-    // Move logic related to DataContext here
-    // Create 1 method for each controller method
-    public class TaskToDoRepository : ITaskToDoRepository
+    public class TaskToDoRepository : IRepository<TaskToDo>
     {
         private readonly DataContext _dataContext;
         public TaskToDoRepository(DataContext dataContext)
@@ -13,27 +11,28 @@ namespace ToDoListAPI.Services
             _dataContext = dataContext;
         }
 
-        public async Task<IEnumerable<TaskToDoDTO>> GetTasksToDo()
+        public async Task<IEnumerable<TaskToDo?>> GetAll()
         {
             return await _dataContext.TasksToDo.ToListAsync();
         }
 
-        public async Task<TaskToDoDTO?> GetTaskToDo(int id)
+        public async Task<TaskToDo?> GetById(int id)
         {
             return await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == id);
+                .FirstOrDefaultAsync(t => t.TaskToDoId == id);
         }
-        public async Task<TaskToDoDTO> AddTaskToDo(TaskToDoDTO task)
+
+        public async Task<TaskToDo?> Add(TaskToDo task) 
         {
             var result = await _dataContext.TasksToDo.AddAsync(task);
             await _dataContext.SaveChangesAsync();
             return result.Entity;
         }
 
-        public async Task<TaskToDoDTO?> UpdateTaskToDo(TaskToDoDTO task)
+        public async Task<TaskToDo?> Update(TaskToDo task) 
         {
             var result = await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == task.Id);
+                .FirstOrDefaultAsync(t => t.TaskToDoId == task.TaskToDoId);
 
             if (result != null)
             {
@@ -48,10 +47,10 @@ namespace ToDoListAPI.Services
 
             return null;
         }
-        public async Task<TaskToDoDTO?> DeleteTaskToDo(int id)
+        public async Task<TaskToDo?> DeleteById(int id)
         {
             var result = await _dataContext.TasksToDo
-                .FirstOrDefaultAsync(t => t.Id == id);
+                .FirstOrDefaultAsync(t => t.TaskToDoId == id);
 
             if (result != null)
             {
@@ -62,5 +61,12 @@ namespace ToDoListAPI.Services
 
             return null;
         }
+
+        //public async Task<IEnumerable<TaskToDo>> GetAllTasksByUser(int userId)
+        //{
+        //    var tasks = await _dataContext.TasksToDo
+        //        .Where(t => t.UserId == userId)
+        //        .ToListAsync();
+        //}
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoListAPI.Models;
+using ToDoListAPI.ResponseDto;
 using ToDoListAPI.Services;
 
 namespace ToDoListAPI.Controllers
@@ -17,7 +18,7 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TaskToDoDTO>>> GetTasksToDo()
+        public async Task<ActionResult<List<TaskToDoResponse>>> GetTasksToDo()
         {
             return Ok(await _taskToDoService.GetTasksToDo());
         }
@@ -36,7 +37,7 @@ namespace ToDoListAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<TaskToDoDTO>>> AddTaskToDo(TaskToDoDTO task)
+        public async Task<ActionResult<List<TaskToDo?>>> AddTaskToDo(TaskToDo task)
         {
             if (task == null)
             {
@@ -46,29 +47,29 @@ namespace ToDoListAPI.Controllers
             var createdTaskToDo = await _taskToDoService.AddTaskToDo(task);
 
             return CreatedAtAction(nameof(GetTaskToDo),
-                new { Id = createdTaskToDo.Id}, createdTaskToDo);
+                new { Id = createdTaskToDo.TaskToDoId}, createdTaskToDo);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<TaskToDoDTO?>> UpdateTaskToDo(int id, TaskToDoDTO request)
+        public async Task<ActionResult<TaskToDo?>> UpdateTaskToDo(int id, TaskToDo request)
         { 
-            if (id != request.Id)
+            if (id != request.TaskToDoId)
             {
                 return BadRequest("Task Id mismatch");
             }
 
-            var taskToDoToUpdate = await _taskToDoService.GetTaskToDo(request.Id);
+            var taskToDoToUpdateId = await _taskToDoService.GetTaskToDo(request.TaskToDoId);
 
-            if (taskToDoToUpdate == null)
+            if (taskToDoToUpdateId == null)
             {
-                return NotFound($"TaskToDo with Id = {request.Id} not found");
+                return NotFound($"TaskToDo with Id = {request.TaskToDoId} not found");
             }
 
             return await _taskToDoService.UpdateTaskToDo(request);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TaskToDoDTO?>> Delete(int id)
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<TaskToDo?>> Delete(int id)
         {
             var taskToDoToDelete = await _taskToDoService.GetTaskToDo(id);
 
@@ -79,5 +80,14 @@ namespace ToDoListAPI.Controllers
 
             return await _taskToDoService.DeleteTaskToDo(id);
         }
+
+        [HttpPut]
+        [Route("{taskId}/assign/user/{userId}")]
+        public async Task<ActionResult<UserResponse>> AssignUserToTask([FromRoute] int taskId, [FromRoute] int userId)
+        {
+            await _taskToDoService.AssignUserToTask(taskId, userId);
+            return NoContent();
+        }
+
     }
 }
