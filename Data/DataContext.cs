@@ -28,7 +28,8 @@ namespace ToDoListAPI.Data
             */
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Tasks)
-                .WithOne();
+                .WithOne(t => t.User)
+                .HasForeignKey(t => t.UserId);
         }
     }
 }

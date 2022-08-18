@@ -9,6 +9,6 @@ namespace ToDoListAPI.Services
         Task<User?> AddUser(User user);
         Task<User?> UpdateUser(User user);
         Task<User?> DeleteUser(int id);
-        Task<User?> AddTaskForUser(int userId, int taskId);
+        //Task<User?> AddTaskForUser(int userId, int taskId);
     }
 }
