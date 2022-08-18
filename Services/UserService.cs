@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using ToDoListAPI.Models;
 using ToDoListAPI.Repository;
+using ToDoListAPI.ResponseDto;
 
 namespace ToDoListAPI.Services
 {
     public class UserService : IUserService
     {
         private readonly IRepository<User> _userRepository;
-        private readonly IRepository<TaskToDo> _taskToDoRepository;
         private readonly IMapper _mapper;
 
         public UserService(IRepository<User> userRepository, IMapper mapper)
@@ -45,12 +45,6 @@ namespace ToDoListAPI.Services
         {
             return await _userRepository.DeleteById(id);
         }
-
-        //public async Task<User?> AddTaskForUser(int userId, int taskId)
-        //{
-
-        //    //return await _userRepository.Update(userId, taskId);
-        //}
         #endregion
 
 

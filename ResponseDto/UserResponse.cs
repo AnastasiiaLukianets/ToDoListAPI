@@ -1,4 +1,6 @@
-﻿namespace ToDoListAPI.Models
+﻿using ToDoListAPI.Models;
+
+namespace ToDoListAPI.ResponseDto
 {
     public class UserResponse
     {

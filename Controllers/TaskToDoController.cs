@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoListAPI.Models;
+using ToDoListAPI.ResponseDto;
 using ToDoListAPI.Services;
 
 namespace ToDoListAPI.Controllers
@@ -88,20 +89,5 @@ namespace ToDoListAPI.Controllers
             return NoContent();
         }
 
-
-        //[HttpPut]
-        //[Route("{taskId}/unassign/user/{userId}")]
-        //public async Task<ActionResult<UserResponse>> AddTask([FromRoute] int userId, [FromRoute] int taskId)
-        //{
-        //    //var response = await 
-        //    //Console.WriteLine($"id = {id}");
-        //    //return await Ok(await ); // $"id = {id}";
-        //    int? checkuser = userid;
-        //    int? checktask = taskid;
-
-        //    console.writeline($"{userid}");
-        //    var users = await _userservice.getusers();
-        //    return ok(users);
-        //}
     }
 }

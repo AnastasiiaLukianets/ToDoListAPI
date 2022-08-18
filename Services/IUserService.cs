@@ -1,4 +1,5 @@
 ﻿using ToDoListAPI.Models;
+using ToDoListAPI.ResponseDto;
 
 namespace ToDoListAPI.Services
 {
@@ -9,6 +10,6 @@ namespace ToDoListAPI.Services
         Task<User?> AddUser(User user);
         Task<User?> UpdateUser(User user);
         Task<User?> DeleteUser(int id);
-        //Task<User?> AddTaskForUser(int userId, int taskId);
+
     }
 }

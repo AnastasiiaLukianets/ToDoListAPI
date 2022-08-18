@@ -1,4 +1,4 @@
-﻿namespace ToDoListAPI.Models
+﻿namespace ToDoListAPI.ResponseDto
 {
     public class TaskToDoResponse
     {

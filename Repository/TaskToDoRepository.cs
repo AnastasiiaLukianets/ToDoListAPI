@@ -11,25 +11,25 @@ namespace ToDoListAPI.Repository
             _dataContext = dataContext;
         }
 
-        public async Task<IEnumerable<TaskToDo?>> GetAll() //GetTasksToDo
+        public async Task<IEnumerable<TaskToDo?>> GetAll()
         {
             return await _dataContext.TasksToDo.ToListAsync();
         }
 
-        public async Task<TaskToDo?> GetById(int id) //GetTaskToDo
+        public async Task<TaskToDo?> GetById(int id)
         {
             return await _dataContext.TasksToDo
                 .FirstOrDefaultAsync(t => t.TaskToDoId == id);
         }
 
-        public async Task<TaskToDo?> Add(TaskToDo task) //AddTaskToDo
+        public async Task<TaskToDo?> Add(TaskToDo task) 
         {
             var result = await _dataContext.TasksToDo.AddAsync(task);
             await _dataContext.SaveChangesAsync();
             return result.Entity;
         }
 
-        public async Task<TaskToDo?> Update(TaskToDo task) //UpdateTaskToDo
+        public async Task<TaskToDo?> Update(TaskToDo task) 
         {
             var result = await _dataContext.TasksToDo
                 .FirstOrDefaultAsync(t => t.TaskToDoId == task.TaskToDoId);
@@ -47,7 +47,7 @@ namespace ToDoListAPI.Repository
 
             return null;
         }
-        public async Task<TaskToDo?> DeleteById(int id) //DeleteTaskToDo
+        public async Task<TaskToDo?> DeleteById(int id)
         {
             var result = await _dataContext.TasksToDo
                 .FirstOrDefaultAsync(t => t.TaskToDoId == id);
@@ -61,5 +61,12 @@ namespace ToDoListAPI.Repository
 
             return null;
         }
+
+        //public async Task<IEnumerable<TaskToDo>> GetAllTasksByUser(int userId)
+        //{
+        //    var tasks = await _dataContext.TasksToDo
+        //        .Where(t => t.UserId == userId)
+        //        .ToListAsync();
+        //}
     }
 }
