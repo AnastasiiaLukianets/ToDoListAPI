@@ -1,10 +1,14 @@
 ﻿namespace ToDoListAPI.Models
 {
-    public class TaskToDoDTO
+    public class TaskToDo
     {
-        public int Id { get; set; }
+        public int TaskToDoId { get; set; }
         public string? DescriptionText { get; set; }
         public bool IsCompleted { get; set; }
         public DateTime DueDate { get; set; }
+
+        //public int? UserId { get; set; }
+
+        //public User? User { get; set; }
     }
 }

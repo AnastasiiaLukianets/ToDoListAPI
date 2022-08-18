@@ -1,43 +1,44 @@
 ﻿using AutoMapper;
 using ToDoListAPI.Models;
+using ToDoListAPI.Repository;
 
 namespace ToDoListAPI.Services
 {
     public class TaskToDoService : ITaskToDoService
     {
-        private readonly ITaskToDoRepository _taskToDoRepository;
+        private readonly IRepository<TaskToDo> _taskToDoRepository;
         private readonly IMapper _mapper;
 
-        public TaskToDoService(ITaskToDoRepository taskToDoRepository, IMapper mapper)
+        public TaskToDoService(IRepository<TaskToDo> taskToDoRepository, IMapper mapper)
         {
             _taskToDoRepository = taskToDoRepository;
             _mapper = mapper;
         }
 
-        #region "ITaskToDoService implementation
-        public async Task<IEnumerable<TaskToDoResponse>> GetTasksToDo()
+        #region ITaskToDoService_implementation
+        public async Task<IEnumerable<TaskToDoResponse?>> GetTasksToDo()
         {
-            var tasksSource = await _taskToDoRepository.GetTasksToDo();
-            var tasks = _mapper.Map<List<TaskToDoResponse>>(tasksSource);
+            var tasksSource = await _taskToDoRepository.GetAll(); //GetTasksToDo();
+            var tasks = _mapper.Map<IEnumerable<TaskToDo?>, IEnumerable<TaskToDoResponse>>(tasksSource);
             return tasks;
         }
-        public async Task<TaskToDoResponse> GetTaskToDo(int id)
+        public async Task<TaskToDoResponse?> GetTaskToDo(int id)
         {
-            var taskSource = await _taskToDoRepository.GetTaskToDo(id);
+            var taskSource = await _taskToDoRepository.GetById(id); //GetTaskToDo(id);
             var task = _mapper.Map<TaskToDoResponse>(taskSource);
             return task;
         }
-        public async Task<TaskToDoDTO> AddTaskToDo(TaskToDoDTO task)
+        public async Task<TaskToDo?> AddTaskToDo(TaskToDo task)
         {
-            return await _taskToDoRepository.AddTaskToDo(task);
+            return await _taskToDoRepository.Add(task); //AddTaskToDo(task);
         }
-        public async Task<TaskToDoDTO> UpdateTaskToDo(TaskToDoDTO task)
+        public async Task<TaskToDo?> UpdateTaskToDo(TaskToDo task)
         {
-            return await _taskToDoRepository.UpdateTaskToDo(task);
+            return await _taskToDoRepository.Update(task); //UpdateTaskToDo(task);
         }
-        public async Task<TaskToDoDTO> DeleteTaskToDo(int id)
+        public async Task<TaskToDo?> DeleteTaskToDo(int id)
         {
-            return await _taskToDoRepository.DeleteTaskToDo(id);
+            return await _taskToDoRepository.DeleteById(id); //DeleteTaskToDo(id);
         }
         #endregion 
     }
