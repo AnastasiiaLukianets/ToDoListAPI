@@ -40,6 +40,13 @@ namespace ToDoListAPI.Services
         {
             return await _taskToDoRepository.DeleteById(id); //DeleteTaskToDo(id);
         }
+
+        public async Task AssignUserToTask(int taskId, int userId)
+        {
+            var task = await _taskToDoRepository.GetById(taskId);
+            task.UserId = userId;
+            await _taskToDoRepository.Update(task);
+        }
         #endregion 
     }
 }

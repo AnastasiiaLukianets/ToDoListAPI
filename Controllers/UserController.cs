@@ -79,19 +79,5 @@ namespace ToDoListAPI.Controllers
             return await _userService.DeleteUser(id);
         }
 
-        [HttpPost]
-        [Route("[action]/{userId?}/tasks/{taskId}")]
-        public async Task<ActionResult<UserResponse>> AddTask([FromRoute] int userId, [FromRoute] int taskId)
-        {
-            //var response = await 
-            //Console.WriteLine($"id = {id}");
-            //return await Ok(await ); // $"id = {id}";
-            int? checkUser = userId;
-            int? checkTask = taskId;
-
-            Console.WriteLine($"{userId}");
-            var users = await _userService.GetUsers();
-            return Ok(users);
-        }
     }
 }
