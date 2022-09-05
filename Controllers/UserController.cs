@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using ToDoListAPI.Models;
 using ToDoListAPI.ResponseDto;
 using ToDoListAPI.Services;
@@ -15,12 +16,14 @@ namespace ToDoListAPI.Controllers
             _userService = userService;
         }
 
+        [EnableCors]
         [HttpGet]
         public async Task<ActionResult<List<UserResponse>>> GetUsers()
         {
             return Ok(await _userService.GetUsers());
         }
 
+        [EnableCors]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<UserResponse>> GetUser(int id)
         {

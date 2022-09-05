@@ -26,7 +26,7 @@ namespace ToDoListAPI.Services
 
         public async Task<UserResponse?> GetUser(int id)
         {
-            var userSource = await _userRepository.GetById(id);
+            User? userSource = await _userRepository.GetById(id);
             var user = _mapper.Map<UserResponse>(userSource);
             return user;
         }

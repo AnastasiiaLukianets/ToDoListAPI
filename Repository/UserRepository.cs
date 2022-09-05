@@ -19,6 +19,7 @@ namespace ToDoListAPI.Repository
         public async Task<User?> GetById(int id)
         {
             return await _dataContext.Users
+                .Include(u => u.Tasks)
                 .FirstOrDefaultAsync(u => u.UserId == id);
         }
 
